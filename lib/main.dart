@@ -2,14 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:widgets/assets/mycolors.dart';
+import 'package:widgets/widgets/app_bar.dart';
 import 'package:widgets/widgets/bottomnavigation.dart';
 import 'package:widgets/widgets/buttonlar.dart';
 import 'package:widgets/widgets/drawer.dart';
+import 'package:widgets/widgets/dropdownbutton.dart';
 import 'package:widgets/widgets/floatbut.dart';
 import 'package:widgets/widgets/imageicon.dart';
+import 'package:widgets/widgets/kart.dart';
 import 'package:widgets/widgets/popmenu.dart';
+import 'package:widgets/widgets/rowcolumn.dart';
+import 'package:widgets/widgets/snakbar.dart';
+import 'package:widgets/widgets/steper.dart';
+import 'package:widgets/widgets/tekst.dart';
 
 import 'widgets/alertd.dart';
+import 'widgets/animated.dart';
 
 void main() {
   runApp(const MyApp());
@@ -147,42 +155,52 @@ class SecondScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => RowColumn())),
                       child: Text("8- Row Column"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Animated())),
                       child: Text("9- Animated Widget"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AppBarApp())),
                       child: Text("10- AppBar"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Tekst())),
                       child: Text("11- Text"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Kart())),
                       child: Text("12- Card"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DropDownBut())),
                       child: Text("13- Dropdown Button"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SnakBar())),
                       child: Text("14- Snackbar"),
                     ),
                     SizedBox(height: 5),
                     ElevatedButton(
-                      onPressed: () => print("object"),
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Stepci())),
                       child: Text("15- Stepper"),
                     ),
                   ],
