@@ -37,6 +37,12 @@ class AppBarExample extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('AppBar Örneği'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () =>
+                Navigator.of(context, rootNavigator: true).pop(context),
+          ),
           notificationPredicate: (ScrollNotification notification) {
             return notification.depth == 1;
           },

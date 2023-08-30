@@ -60,24 +60,26 @@ class _MyHomePageState extends State<MyHomePage> {
       color: MyColors.renk5,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(80.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(children: [
-            Container(
+            Expanded(
               child: FlutterLogo(size: MediaQuery.of(context).size.width),
             ),
             const SizedBox(
-              height: 50.0,
+              height: 20.0,
             ),
-            ElevatedButton(
-                onPressed: () => Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => SecondScreen())),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text(
-                    "Hoş Geldiniz",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ))
+            Expanded(
+              child: TextButton(
+                  onPressed: () => Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SecondScreen())),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text(
+                      "Hoş Geldiniz",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  )),
+            )
           ]),
         ),
       ),

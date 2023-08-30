@@ -16,6 +16,7 @@ class Drawer1 extends StatelessWidget {
         ),
       ),
       drawer: Drawer(
+        semanticLabel: "a",
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
