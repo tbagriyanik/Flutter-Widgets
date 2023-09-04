@@ -7,13 +7,15 @@ class Urunler {
   final String urunadi;
   final double fiyat;
   final int adet;
+  final String ID;
 
-  Urunler(this.urunadi, this.fiyat, this.adet);
+  Urunler(this.urunadi, this.fiyat, this.adet, this.ID);
 
   // Factory constructor to convert Firestore document data to a Product object
   factory Urunler.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Urunler(data['urunadi'], data['fiyat'].toDouble(), data['adet']);
+    return Urunler(
+        data['urunadi'], data['fiyat'].toDouble(), data['adet'], doc.id);
   }
 }
 
@@ -37,6 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
   User? _user;
 
   late Stream<List<Urunler>> _productsStream;
+
+  String? selectedProductId;
+  //late final productIDs;
 
   void _login() async {
     try {
@@ -121,6 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _urunAdiController.clear();
       _urunFiyatController.clear();
       _urunAdetController.clear();
+      String hata = '👌 Ürün eklendi';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(hata),
+      ));
     } catch (e) {
       setState(() {
         String hata = '💥 Ürün ekleme hatası: \n$e';
@@ -146,6 +155,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _urunAdiController.clear();
       _urunFiyatController.clear();
       _urunAdetController.clear();
+      String hata = '👌 Ürün güncellendi';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(hata),
+      ));
     } catch (e) {
       setState(() {
         String hata = '💥 Ürün güncelleme hatası: \n$e';
@@ -163,6 +176,10 @@ class _LoginScreenState extends State<LoginScreen> {
           .collection('urunler')
           .doc(productId)
           .delete();
+      String hata = '👌 Ürün silindi';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(hata),
+      ));
     } catch (e) {
       setState(() {
         String hata = '💥 Ürün silme hatası: \n$e';
@@ -177,12 +194,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
-      setState(() {
+      setState(() async {
         errorMessage = '🛟 Firebase bağlantısı var';
+
         _productsStream = FirebaseFirestore.instance
             .collection('urunler')
             .snapshots()
             .map((querySnapshot) {
+          //productIDs = querySnapshot.docs.map((doc) => doc.id).toList();
           return querySnapshot.docs
               .map((doc) => Urunler.fromFirestore(doc))
               .toList();
@@ -335,7 +354,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 product.fiyat.toString();
                             _urunAdetController.text = product.adet.toString();
 
-                            // Show a dialog to update the product
+                            selectedProductId = product.ID;
+
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -366,14 +386,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Text('Güncelle'),
                                       onPressed: () {
                                         // Update the product with the entered values
-                                        _updateProduct(product.urunadi);
+                                        _updateProduct(selectedProductId!);
                                         Navigator.of(context).pop();
                                       },
                                     ),
                                     ElevatedButton(
                                       child: Text('Sil'),
                                       onPressed: () {
-                                        _deleteProduct(product.urunadi);
+                                        _deleteProduct(selectedProductId!);
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -391,7 +411,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onLongPress: () {
                           // çalışmadı
-                          _deleteProduct(product.urunadi);
+                          _deleteProduct(selectedProductId!);
                         },
                       );
                     }).toList(),
