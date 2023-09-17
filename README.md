@@ -12,6 +12,8 @@ Firebase
 ![Firebase Giriş](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/Screenshot_1694027836.png)
 ![Firebase CRUD](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/Screenshot_1694027824.png)
 
+Eposta Uygulaması
+![Eposta](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/Screenshot_20230917_132247.png)
 
 
 
