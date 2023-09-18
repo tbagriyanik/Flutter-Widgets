@@ -19,4 +19,4 @@ Firebase
 ![Firebase CRUD](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/Screenshot_1694027824.png)
 
 SQFLite
-![SQFLite](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/12%20sqflite%20CRUD.dart)
+![SQFLite](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/12%20sql%20Screenshot_20230918_213437.png)
