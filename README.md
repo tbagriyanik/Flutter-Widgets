@@ -1,5 +1,7 @@
 # Flutter Widgets Firebase SQFLite
 
+Week 6 - Text Styles and TextFields https://tbagriyanik.github.io/metinstilleri/
+
 ## Flutter Widget Project
 
 ![ana ekran](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/anaEkran.png)
