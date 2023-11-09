@@ -1,5 +1,6 @@
 # Flutter Widgets Firebase SQFLite
 
+* Flutter Table : https://tbagriyanik.github.io/fluttertablo
 * Flutter Codes : https://tbagriyanik.github.io/flutterkod
 * Flutter Widgets : https://tbagriyanik.github.io/flutterwidgets
 * Tiktakto Game : https://tbagriyanik.github.io/tiktakto
