@@ -1,7 +1,9 @@
 # Flutter Widgets Firebase SQFLite
 
-Week 6 - Text Styles and TextFields https://tbagriyanik.github.io/metinstilleri/
-
+* Tiktakto Game : https://tbagriyanik.github.io/tiktakto
+* Week 5 : Pages https://tbagriyanik.github.io/fluttersayfalar 
+* Week 6 : Text Styles and TextFields https://tbagriyanik.github.io/metinstilleri
+  
 ## Flutter Widget Project
 
 ![ana ekran](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/anaEkran.png)
