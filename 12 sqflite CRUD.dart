@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-main() {
-  runApp(new MaterialApp(home: new MyApp()));
+// Dikkat
+// pubspec.yaml içine   sqflite: eklenmelidir
+
+void main() {
+  runApp(MaterialApp(home: MyApp()));
 }
 
 class MyData {
@@ -99,6 +102,7 @@ class _MyAppState extends State<MyApp> {
   final dbHelper = DatabaseHelper();
 
   late List<MyData> persons;
+  late List<MyData> filteredPersons = [];
 
   int personCount = 0;
 
@@ -106,6 +110,8 @@ class _MyAppState extends State<MyApp> {
   final _emailControllerInsert = TextEditingController();
   late TextEditingController _nameControllerUpdate = TextEditingController();
   late TextEditingController _emailControllerUpdate = TextEditingController();
+
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -122,6 +128,7 @@ class _MyAppState extends State<MyApp> {
 
       setState(() {
         persons = myDataList;
+        filteredPersons = myDataList;
         personCount = myDataList.length;
       });
     } catch (e) {
@@ -134,7 +141,7 @@ class _MyAppState extends State<MyApp> {
       await dbHelper.deleteData(id);
       initDatabaseAndGetData();
     } catch (e) {
-      print("Error deleting item: $e");
+      print("Error deleting person: $e");
     }
   }
 
@@ -154,11 +161,11 @@ class _MyAppState extends State<MyApp> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Item'),
+          title: Text('Delete Person'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Are you sure you want to delete this item?'),
+                Text('Are you sure you want to delete this person?'),
               ],
             ),
           ),
@@ -288,51 +295,105 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'SQFlite Database',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('SQFlite Database Widget'),
+          title: isSearching
+              ? TextField(
+                  onChanged: (query) {
+                    // Update the filtered data based on the search query
+                    setState(() {
+                      filteredPersons = persons
+                          .where((person) =>
+                              person.name
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()) ||
+                              person.email
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()))
+                          .toList();
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search person...',
+                    border: InputBorder.none,
+                  ),
+                )
+              : Text('Personal Database'),
           centerTitle: true,
+          backgroundColor: Colors.blueAccent,
+          actions: [
+            IconButton(
+              icon: Icon(
+                  isSearching ? Icons.clear : Icons.person_search_outlined),
+              onPressed: () {
+                setState(() {
+                  isSearching = !isSearching;
+                  if (!isSearching) {
+                    filteredPersons = persons;
+                  }
+                });
+              },
+            ),
+          ],
         ),
         body: Center(
           child: Container(
-            child: (personCount > 0)
+            child: (filteredPersons.isNotEmpty)
                 ? ListView.builder(
-                    itemCount: personCount,
+                    itemCount: filteredPersons.length,
                     itemBuilder: (BuildContext context, int position) {
                       return Card(
-                        color: Colors.amberAccent,
-                        elevation: 2.0,
+                        color: Colors.yellow[200],
+                        elevation: 1.0,
                         child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.blueAccent,
+                          leading: Container(
+                            width: 70,
                             child: TextButton(
-                              onPressed: () =>
-                                  _updateItem(context, persons[position].id),
-                              child: Text(
-                                this.persons[position].id.toString(),
-                                style: TextStyle(color: Colors.white),
+                              onPressed: () => _updateItem(
+                                  context, filteredPersons[position].id),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person_pin_outlined,
+                                      color: Colors.blue),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    filteredPersons[position].id.toString(),
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          title: Text(this.persons[position].name),
-                          subtitle: Text(this.persons[position].email),
-                          onLongPress: () {
-                            _showDeleteConfirmationDialog(
-                                context, this.persons[position].id);
-                          },
+                          title: Text(filteredPersons[position].name),
+                          subtitle: Text(filteredPersons[position].email),
+                          trailing: GestureDetector(
+                            child: Icon(
+                              Icons.person_remove_alt_1_outlined,
+                              color: Colors.pink,
+                            ),
+                            onTap: () {
+                              _showDeleteConfirmationDialog(
+                                  context, filteredPersons[position].id);
+                            },
+                          ),
                         ),
                       );
-                    })
+                    },
+                  )
                 : Center(
-                    child: Text("No data"),
+                    child: Text("No matching data"),
                   ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: Colors.green,
           onPressed: () {
             _showAddPersonDialog(context);
           },
-          child: Icon(Icons.person_add),
+          child: Icon(Icons.person_add_alt),
         ),
       ),
     );
