@@ -26,7 +26,7 @@
 ![Firebase CRUD](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/Screenshot_1694027824.png)
 
 ## SQFLite
-![SQFLite](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/12%20sql%20Screenshot_20230918_213437.png)
+![SQFLite](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/personelVT.png)
 
 ## Tercihleri Kaydetme
 ![Tercihler](https://github.com/tbagriyanik/Flutter-Widgets/blob/main/13%20prefs%20Screenshot_20230919_150648.png)
