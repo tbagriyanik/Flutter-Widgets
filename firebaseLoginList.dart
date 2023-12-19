@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
 class Urunler {
   final String urunadi;
@@ -11,11 +11,14 @@ class Urunler {
 
   Urunler(this.urunadi, this.fiyat, this.adet, this.ID);
 
-  // Factory constructor to convert Firestore document data to a Product object
   factory Urunler.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Urunler(
-        data['urunadi'], data['fiyat'].toDouble(), data['adet'], doc.id);
+      data['urunadi'],
+      data['fiyat'].toDouble(),
+      data['adet'],
+      doc.id,
+    );
   }
 }
 
@@ -41,7 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
   late Stream<List<Urunler>> _productsStream;
 
   String? selectedProductId;
-  //late final productIDs;
 
   void _login() async {
     try {
@@ -72,8 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text, // Replace with desired email
-        password: _passwordController.text, // Replace with desired password
+        email: _emailController.text,
+        password: _passwordController.text,
       );
       setState(() {
         _user = userCredential.user;
@@ -87,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _deleteAccount() async {
     try {
-      // Before deleting the account, you might want to ask the user for confirmation or re-authenticate them.
       await _user?.delete();
       setState(() {
         _user = null;
@@ -101,9 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _resetPassword() async {
     try {
-      await _auth.sendPasswordResetEmail(
-          email: _emailController.text); // Replace with user's email
-      // Inform the user that a password reset email has been sent
+      await _auth.sendPasswordResetEmail(email: _emailController.text);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Parola yenileme bağlantısı emailinize gönderilmiştir.'),
       ));
@@ -114,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Create a new product in Firestore
   void _createProduct() async {
     try {
       await FirebaseFirestore.instance.collection('urunler').add({
@@ -122,7 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
         'fiyat': double.parse(_urunFiyatController.text),
         'adet': int.parse(_urunAdetController.text),
       });
-      // Clear text fields after adding a product
       _urunAdiController.clear();
       _urunFiyatController.clear();
       _urunAdetController.clear();
@@ -140,7 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Update an existing product in Firestore
   void _updateProduct(String productId) async {
     try {
       await FirebaseFirestore.instance
@@ -151,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
         'fiyat': double.parse(_urunFiyatController.text),
         'adet': int.parse(_urunAdetController.text),
       });
-      // Clear text fields after updating a product
       _urunAdiController.clear();
       _urunFiyatController.clear();
       _urunAdetController.clear();
@@ -169,7 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Delete a product from Firestore
   void _deleteProduct(String productId) async {
     try {
       await FirebaseFirestore.instance
@@ -201,7 +195,6 @@ class _LoginScreenState extends State<LoginScreen> {
             .collection('urunler')
             .snapshots()
             .map((querySnapshot) {
-          //productIDs = querySnapshot.docs.map((doc) => doc.id).toList();
           return querySnapshot.docs
               .map((doc) => Urunler.fromFirestore(doc))
               .toList();
@@ -222,7 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Scaffold basariliEkran() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Firebase Örnek'),
+        title: const Text('Firestore Örnek'),
+        centerTitle: true,
+        elevation: 5,
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
@@ -238,10 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              // PopupMenuItem 1
               const PopupMenuItem(
                 value: 1,
-                // row with 2 children
                 child: Row(
                   children: [
                     Icon(Icons.delete_sweep_outlined, color: Colors.red),
@@ -255,10 +248,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              // PopupMenuItem 2
               const PopupMenuItem(
                 value: 2,
-                // row with two children
                 child: Row(
                   children: [
                     Icon(Icons.logout, color: Colors.blue),
@@ -271,14 +262,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
             offset: Offset(0, 55),
-            //color: Colors.black,
             elevation: 2,
-            // on selected we show the dialog box
             onSelected: (value) {
-              // if value 1 show dialog
               if (value == 1) {
                 _deleteAccount();
-                // if value 2 show dialog
               } else if (value == 2) {
                 _logout();
               }
@@ -286,148 +273,154 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 10,
-              ),
-              const Text(
-                'Ürün Listesi',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              // Add a new product
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _urunAdiController,
-                      decoration: InputDecoration(labelText: 'Ürün Adı'),
-                    ),
-                    TextField(
-                      controller: _urunFiyatController,
-                      decoration: InputDecoration(labelText: 'Fiyat'),
-                    ),
-                    TextField(
-                      controller: _urunAdetController,
-                      decoration: InputDecoration(labelText: 'Adet'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _createProduct,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text('Ürün Ekle'),
-                        ],
-                      ),
-                    ),
-                  ],
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'Ürün İşlemleri',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(50, 10, 50, 10),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _urunAdiController,
+                  decoration: InputDecoration(labelText: 'Ürün Adı'),
                 ),
-              ),
-              StreamBuilder<List<Urunler>>(
-                stream: _productsStream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const CircularProgressIndicator();
-                  }
-                  final products = snapshot.data;
-                  return Column(
-                    children: products!.map((product) {
-                      return ListTile(
-                        title: Text(product.urunadi),
-                        subtitle: Text(
-                            '${product.fiyat.toStringAsFixed(2)} ₺ (${product.adet.toString()} adet)'),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit_note_outlined),
-                          onPressed: () {
-                            // When edit button is pressed, populate text fields with product info
-                            _urunAdiController.text = product.urunadi;
-                            _urunFiyatController.text =
-                                product.fiyat.toString();
-                            _urunAdetController.text = product.adet.toString();
+                TextField(
+                  controller: _urunFiyatController,
+                  decoration: InputDecoration(labelText: 'Fiyat'),
+                ),
+                TextField(
+                  controller: _urunAdetController,
+                  decoration: InputDecoration(labelText: 'Adet'),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 50)),
+                  onPressed: _createProduct,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Ürün Ekle'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(color: Colors.blueAccent),
+          Expanded(
+            child: StreamBuilder<List<Urunler>>(
+              stream: _productsStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const LinearProgressIndicator();
+                }
+                final products = snapshot.data;
+                return ListView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: products!.map((product) {
+                    return ListTile(
+                      //tileColor: Colors.cyan,
+                      title: Text(product.urunadi),
+                      subtitle: Text(
+                          '${product.fiyat.toStringAsFixed(2)} ₺ (${product.adet.toString()} adet)'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.edit_note_outlined),
+                        onPressed: () {
+                          _urunAdiController.text = product.urunadi;
+                          _urunFiyatController.text = product.fiyat.toString();
+                          _urunAdetController.text = product.adet.toString();
 
-                            selectedProductId = product.ID;
+                          selectedProductId = product.ID;
 
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Ürün Güncelleme'),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      TextField(
-                                        controller: _urunAdiController,
-                                        decoration: InputDecoration(
-                                            labelText: 'Ürün Adı'),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Güncelleme veya Silme'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    TextField(
+                                      controller: _urunAdiController,
+                                      decoration: InputDecoration(
+                                          labelText: 'Ürün Adı'),
+                                    ),
+                                    TextField(
+                                      controller: _urunFiyatController,
+                                      decoration:
+                                          InputDecoration(labelText: 'Fiyat'),
+                                    ),
+                                    TextField(
+                                      controller: _urunAdetController,
+                                      decoration:
+                                          InputDecoration(labelText: 'Adet'),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                        child: Text('Güncelle'),
+                                        onPressed: () {
+                                          _updateProduct(selectedProductId!);
+                                          Navigator.of(context).pop();
+                                        },
                                       ),
-                                      TextField(
-                                        controller: _urunFiyatController,
-                                        decoration:
-                                            InputDecoration(labelText: 'Fiyat'),
+                                      ElevatedButton(
+                                        child: Text(
+                                          'Sil',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.redAccent,
+                                        ),
+                                        onPressed: () {
+                                          _deleteProduct(selectedProductId!);
+                                          Navigator.of(context).pop();
+                                        },
                                       ),
-                                      TextField(
-                                        controller: _urunAdetController,
-                                        decoration:
-                                            InputDecoration(labelText: 'Adet'),
+                                      ElevatedButton(
+                                        child: Text('Vazgeç'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
                                       ),
                                     ],
                                   ),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      child: Text('Güncelle'),
-                                      onPressed: () {
-                                        // Update the product with the entered values
-                                        _updateProduct(selectedProductId!);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text('Sil'),
-                                      onPressed: () {
-                                        _deleteProduct(selectedProductId!);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text('Vazgeç'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        onLongPress: () {
-                          // çalışmadı
-                          _deleteProduct(selectedProductId!);
+                                ],
+                              );
+                            },
+                          );
                         },
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-            ],
+                      ),
+                      onLongPress: () {
+                        _deleteProduct(selectedProductId!);
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Scaffold girisFormu() {
     return Scaffold(
-      appBar: AppBar(title: const Text('Firebase Örnek')),
+      appBar:
+          AppBar(title: const Text('Cloud Firestore Örnek'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -441,7 +434,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: "aaa@aaa.com",
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 5),
             TextFormField(
               controller: _passwordController,
               decoration: const InputDecoration(
@@ -450,7 +443,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               obscureText: true,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 5),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -465,7 +458,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 15),
+                  const SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: _register,
                     child: Row(
@@ -476,7 +469,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 15),
+                  const SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: _resetPassword,
                     child: Row(
